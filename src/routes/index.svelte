@@ -4,13 +4,7 @@
         name: String;
         placeId: String;
     }
-
-    const places = {
-        "River North": "ChIJS2Sm7bUsDogR96Ftwh",
-        "River West": "ChIJ6XSSwtIsDogR5xHPvcHH9r0"
-    }
-
-    console.log(places["River North"])
+ 
 
     const googlePlaces: googlePlace[] = [
       {
