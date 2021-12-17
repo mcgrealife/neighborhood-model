@@ -2,24 +2,14 @@
 
  // these are valid google places
     enum googlePlace {
-        "River North"="River North",
-        "River West"= "River West",
+        "River North" = "River North",
+        "River West" = "River West",
         "West Loop" = "West Loop",
         "South Loop" = "South Loop",
         "Streeterville" = "Streeterville",
         "New Eastside" = "New Eastside",
         "Printer's Row" = "Printer's Row"
     }
-
-    // enum googlePlace {
-    //     "River North" = "ChIJS2Sm7bUsDogR96Ftwh-QLis",
-    //     "River West" = "ChIJ6XSSwtIsDogR5xHPvcHH9r0",
-    //     "West Loop" = "ChIJ3baIM9osDogRVpFwiwqSLJQ",
-    //     "South Loop" = "ChIJ-xi8O48sDogRcBMK7WhN4pE",
-    //     "Streeterville" = "ChIJ0UDWv6osDogRr7DEnYYPr4Y",
-    //     "New Eastside" ="ChIJjXp9wFcrDogRru8nq-MsgWY",
-    //     "Printer's Row" ="ChIJHyxSl5csDogRcG_kdoAw_ZE"
-    // }
 
     
     interface ResiderNeighborhood {
@@ -95,6 +85,14 @@
       console.log(searchText)
     
     }
+
+
+
+    // converting enum to array for #each
+    const googlePlaces = [] 
+    for (const place in googlePlace) {
+        googlePlaces.push(place)
+    }
     
     </script>
     
@@ -108,12 +106,11 @@
     <table>
       <tr>
         <th scope="row">placeName</th>
-        <th scope="row">placeId</th>
       </tr>
-      {#each googlePlace as place}
+      
+      {#each googlePlaces as place}
         <tr>
           <td>{place}</td>
-          <td>{place.value}</td>
         </tr>
       {/each}
     </table>
