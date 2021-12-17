@@ -1,45 +1,26 @@
 <script lang="ts">
 
-    interface googlePlace {
-        name: String;
-        placeId: String;
+ // these are valid google places
+    enum googlePlace {
+        "River North"="River North",
+        "River West"= "River West",
+        "West Loop" = "West Loop",
+        "South Loop" = "South Loop",
+        "Streeterville" = "Streeterville",
+        "New Eastside" = "New Eastside",
+        "Printer's Row" = "Printer's Row"
     }
- 
 
-    const googlePlaces: googlePlace[] = [
-      {
-        "name": "River North",
-        "placeId":"ChIJS2Sm7bUsDogR96Ftwh-QLis"
-      },
-      {
-        "name": "River West",
-        "placeId": "ChIJ6XSSwtIsDogR5xHPvcHH9r0"
-      },
-      {
-        "name": "West Loop",
-        "placeId": "ChIJ3baIM9osDogRVpFwiwqSLJQ"
-      },
-      {
-        "name": "South Loop",
-        "placeId": "ChIJ-xi8O48sDogRcBMK7WhN4pE"
-        },
-      {
-        "name": "Streeterville",
-        "placeId": "ChIJ0UDWv6osDogRr7DEnYYPr4Y"
-      },
-      {
-        "name": "New Eastside",
-        "placeId": "ChIJjXp9wFcrDogRru8nq-MsgWY"
-      },
-      {
-        "name": "Printer's Row",
-        "placeId": "ChIJHyxSl5csDogRcG_kdoAw_ZE"
-        }
-    ]
+    // enum googlePlace {
+    //     "River North" = "ChIJS2Sm7bUsDogR96Ftwh-QLis",
+    //     "River West" = "ChIJ6XSSwtIsDogR5xHPvcHH9r0",
+    //     "West Loop" = "ChIJ3baIM9osDogRVpFwiwqSLJQ",
+    //     "South Loop" = "ChIJ-xi8O48sDogRcBMK7WhN4pE",
+    //     "Streeterville" = "ChIJ0UDWv6osDogRr7DEnYYPr4Y",
+    //     "New Eastside" ="ChIJjXp9wFcrDogRru8nq-MsgWY",
+    //     "Printer's Row" ="ChIJHyxSl5csDogRcG_kdoAw_ZE"
+    // }
 
-    console.log(googlePlaces.filter(place =>
-        place.name == "River North"
-    ))
     
     interface ResiderNeighborhood {
       id: number;
@@ -50,38 +31,31 @@
     const neighborhoods: ResiderNeighborhood[] = [
       {
         id: 1,
-        primary: "River North",
-        alias: ""
+        primary: googlePlace["River North"],
       },
        {
         id: 2,
-        primary: "River West",
-        alias: ""
+        primary: googlePlace["River West"],
       },
        {
         id: 3,
-        primary: "West Loop",
-        alias: ""
+        primary: googlePlace["West Loop"],
       },
        {
         id: 4,
-        primary: "South Loop",
-        alias: ""
+        primary: googlePlace["South Loop"],
       },
        {
         id: 5,
-        primary: "Streeterville",
-        alias: ""
+        primary: googlePlace["Streeterville"],
       },
        {
         id: 6,
-        primary: "New Eastside",
-        alias: "Lakeshore East"
+        primary: googlePlace["New Eastside"],
       },
        {
         id: 7,
-        primary: "Printer's Row",
-        alias: ""
+        primary: googlePlace["Printer's Row"],
       }
     ]
     
@@ -94,24 +68,24 @@
     const properties: ResiderProperty[] = [
       {
         id: 1,
-        primary: googlePlaces[0]
+        primary: googlePlace["River North"]
       },
       {
         id: 2,
-        primary: "River North",
+        primary: googlePlace["River North"]
       },
       {
         id: 3,
-        primary: "New Eastside",
+        primary: googlePlace["New Eastside"],
       },
       {
         id: 4,
-        primary: "Printer's Row",
-        secondary: "South Loop"
+        primary: googlePlace["Printer's Row"],
+        secondary: googlePlace["South Loop"]
       },
       {
         id: 5,
-        primary: "South Loop",
+        primary: googlePlace["South Loop"],
       }    
     ]
     
@@ -136,10 +110,10 @@
         <th scope="row">placeName</th>
         <th scope="row">placeId</th>
       </tr>
-      {#each googlePlaces as place}
+      {#each googlePlace as place}
         <tr>
-          <td>{place.name}</td>
-          <td>{place.placeId}</td>
+          <td>{place}</td>
+          <td>{place.value}</td>
         </tr>
       {/each}
     </table>
