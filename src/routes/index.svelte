@@ -10,7 +10,6 @@
     "Printer's Row" = "Printer's Row",
   }
 
-
   interface ResiderNeighborhood {
     id: number;
     primary: googlePlace;
@@ -29,7 +28,7 @@
     {
       id: 3,
       primary: googlePlace["West Loop"],
-      alias: "Way West"
+      alias: "Way West",
     },
     {
       id: 4,
@@ -54,41 +53,41 @@
     id: number;
     primary: googlePlace;
     secondary?: googlePlace;
-    zipcode?: number[]
+    zipcode?: number[];
   }
 
   const properties: ResiderProperty[] = [
     {
       id: 1,
       primary: googlePlace["River North"],
-      zipcode: [60661, 60662]
+      zipcode: [60661, 60662],
     },
     {
       id: 2,
       primary: googlePlace["River North"],
       secondary: googlePlace["Streeterville"],
-      zipcode: [60663]
+      zipcode: [60661],
     },
     {
       id: 3,
       primary: googlePlace["New Eastside"],
-      zipcode: [60664, 60665]
+      zipcode: [60663, 60664],
     },
     {
       id: 4,
       primary: googlePlace["Printer's Row"],
       secondary: googlePlace["South Loop"],
-      zipcode: [60666]
+      zipcode: [60665],
     },
     {
       id: 5,
       primary: googlePlace["South Loop"],
-      zipcode: [60667, 60668, 60669]
+      zipcode: [60666, 60667, 60668],
     },
     {
       id: 6,
       primary: googlePlace["West Loop"],
-      zipcode: [60610]
+      zipcode: [60609],
     },
     {
       id: 7,
@@ -101,23 +100,31 @@
   for (const place in googlePlace) {
     googlePlaces.push(place);
   }
-  
 
-  let searchText: string // binded to the input field
-  let lastSearchedText: string = "" 
+  let searchText: string; // binded to the input field
+  let lastSearchedText: string = "";
   let searchResults: ResiderProperty[] = [];
 
   function onClick() {
     searchResults = []; // clear search results from last search
-    search(searchText) // invoke new search
-    lastSearchedText = searchText // save search text to display in results
-    searchText = "" // clear binded input value
+    search(searchText); // invoke new search
+    lastSearchedText = searchText; // save search text to display in results
+    searchText = ""; // clear binded input value
   }
 
   function search(searchText) {
-      
+    let zipcodeInput = Number(searchText);
+
+    if (zipcodeInput != NaN) {
+      let zipMatches = properties.filter((property) =>
+        property.zipcode?.includes(zipcodeInput)
+      );
+      zipMatches.forEach((property) => {
+        searchResults.push(property);
+      });
+    }
     // is it a valid google places neighborhood?
-    if (googlePlaces.includes(searchText)) {
+    else if (googlePlaces.includes(searchText)) {
       // great! then find properties with matching primary neighborhood
       getPropertiesByGooglePlace(searchText);
     } else {
@@ -130,19 +137,19 @@
       // and rerun getPropertiesByGooglePlaces() with that primary neighborhood
       if (aliasMatch.length > 0) {
         getPropertiesByGooglePlace(aliasMatch[0].primary);
-      } 
+      }
     }
 
     function getPropertiesByGooglePlace(searchString: string) {
       let primaryMatches = properties.filter(
         (property) => property.primary == searchString
       );
-      
+
       // and properties with matching secondary neighborhoods
       let secondaryMatches = properties.filter(
         (property) => property.secondary == searchString
       );
-      
+
       // push them both to the result
       primaryMatches.forEach((property) => {
         searchResults.push(property);
@@ -152,98 +159,100 @@
       });
     }
   }
-  
-
-
 </script>
 
 <main>
-  
-    
-
-    <h3>Search for properties by <code>google places neighborhood</code>, or <code>neighborhood alias</code></h3>
-  <input bind:value={searchText} placeholder="Search for properties by google places neighborhood, or neighborhood alias" class="input"/>
-  <button on:click={onClick} class="btn">Search</button>
-
-  
+  <h3>
+    Search for properties by <code>google places neighborhood</code>, or
+    <code>neighborhood alias</code>
+  </h3>
+  <form action="">
+    <input
+    bind:value={searchText}
+    placeholder="Search for properties by google places neighborhood, or neighborhood alias"
+    class="input"
+  />
+  <button on:click|preventDefault={onClick} class="btn">Search</button>
+  </form>
 
   {#if searchResults.length > 0}
-  <h3>🏢 {searchResults.length} properties match "{lastSearchedText}"</h3>
+    <h3>🏢 {searchResults.length} properties match "{lastSearchedText}"</h3>
+  {:else if lastSearchedText.length == 0}
+    <h3>Beware: case sensitive! 💾</h3>
   {:else}
-  {#if lastSearchedText.length == 0}
-        <h3>Beware: case sensitive! 💾</h3>
-        {:else}
-    <h3>0 properties matches "{lastSearchedText}". try again 🤨 (case-sensitive)</h3>
-    {/if}
+    <h3>
+      0 properties matches "{lastSearchedText}". try again 🤨 (case-sensitive)
+    </h3>
   {/if}
 
-  <hr class="divider">
- <div class="databases">
+  <hr class="divider" />
+  <div class="databases">
+    <div>
+      <h3>Google Places</h3>
+      <table>
+        <tr>
+          <th scope="row">placeName</th>
+        </tr>
+
+        {#each googlePlaces as place}
+          <tr>
+            <td>{place}</td>
+          </tr>
+        {/each}
+      </table>
+    </div>
 
     <div>
-    
-    <h3>Google Places</h3>
-    <table>
-      <tr>
-        <th scope="row">placeName</th>
-      </tr>
-  
-      {#each googlePlaces as place}
+      <h3>Neighborhoods</h3>
+      <table>
         <tr>
-          <td>{place}</td>
+          <th scope="row">id</th>
+          <th scope="row">primary</th>
+          <th scope="row">alias</th>
         </tr>
-      {/each}
-    </table>
-</div>
-   
-  
-    <div >
-        <h3>Neighborhoods</h3>
-    <table>
-      <tr>
-        <th scope="row">id</th>
-        <th scope="row">primary</th>
-        <th scope="row">alias</th>
-      </tr>
-      {#each neighborhoods as neighborhood}
+        {#each neighborhoods as neighborhood}
+          <tr>
+            <td>{neighborhood.id}</td>
+            <td>{neighborhood.primary}</td>
+            <td>{neighborhood.alias != undefined ? neighborhood.alias : ""}</td>
+          </tr>
+        {/each}
+      </table>
+    </div>
+
+    <div>
+      <h3>Properties</h3>
+      <table>
         <tr>
-          <td>{neighborhood.id}</td>
-          <td>{neighborhood.primary}</td>
-          <td>{neighborhood.alias != undefined ? neighborhood.alias : ""}</td>
+          <th scope="row">id</th>
+          <th scope="row">primary</th>
+          <th scope="row">secondary</th>
+          <th scope="row">zipcodes</th>
         </tr>
-      {/each}
-    </table>
+        {#each properties as property}
+          <tr
+            class={searchResults.some((result) => result.id == property.id) &&
+              "selected"}
+          >
+            <td>{property.id}</td>
+            <td>{property.primary}</td>
+            <td>{property.secondary != undefined ? property.secondary : ""}</td>
+            <td>{property.zipcode != undefined ? property.zipcode : ""}</td>
+          </tr>
+        {/each}
+      </table>
     </div>
-  
-    <div >
-        <h3>Properties</h3>
-    <table>
-      <tr>
-        <th scope="row">id</th>
-        <th scope="row">primary</th>
-        <th scope="row">secondary</th>
-      </tr>
-      {#each properties as property}
-        <tr class={searchResults.some(result => result.id == property.id) && "selected"}>
-          <td>{property.id}</td>
-          <td>{property.primary}</td>
-          <td>{property.secondary != undefined ? property.secondary : ""}</td>
-        </tr>
-      {/each}
-    </table>
-    </div>
- </div>
+  </div>
 
- <hr class="divider">
+  <hr class="divider" />
 
- <h3>Notable searches</h3>
- <li>Lakeshore East - (an alias that returns "New Eastside)</li>
- <li>South Loop - returns 2 properties (1 based on it's secondary neighborhood!)</li>
- <li>Printer's Row - returns property 4 again! in a different search</li>
- <li>sdfasdff - returns nothing!</li>
-
-
-
+  <h3>Notable searches</h3>
+  <li>Lakeshore East - (an alias that returns "New Eastside)</li>
+  <li>
+    South Loop - returns 2 properties (1 based on it's secondary neighborhood!)
+  </li>
+  <li>Printer's Row - returns property 4 again! in a different search</li>
+  <li>sdfasdff - returns nothing!</li>
 </main>
 
 <style>
@@ -252,21 +261,20 @@
   }
 
   .databases {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
-      align-content: flex-start;
-
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: flex-start;
   }
 
   .divider {
-    border-top:1px solid #bbb
+    border-top: 1px solid #bbb;
   }
 
   .input {
-      width: 50%;
-      height: 50px;
-      font-size: 16px;
+    width: 50%;
+    height: 50px;
+    font-size: 16px;
   }
 
   .btn {
@@ -280,7 +288,7 @@
   }
 
   .btn:hover {
-      transform: scale(0.9)
+    transform: scale(0.9);
   }
 
   table {
@@ -313,9 +321,8 @@
   } */
 
   tr.selected {
-    background-color: #3c4043 ;
-    color: white ;
+    background-color: #3c4043;
+    color: white;
     font-weight: 700;
   }
-
 </style>
