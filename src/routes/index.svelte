@@ -1,239 +1,187 @@
 <script lang="ts">
 
-interface googlePlace {
-    name: string;
-    placeId: string;
-}
-
- const googlePlaces = [
-  {
-    "name": "River North",
-    "placeId":"ChIJS2Sm7bUsDogR96Ftwh-QLis"
-  },
-  {
-    "name": "River West",
-    "placeId": "ChIJ6XSSwtIsDogR5xHPvcHH9r0"
-  },
-  {
-    "name": "West Loop",
-    "placeId": "ChIJ3baIM9osDogRVpFwiwqSLJQ"
-  },
-  {
-    "name": "South Loop",
-    "placeId": "ChIJ-xi8O48sDogRcBMK7WhN4pE"
-    },
-  {
-    "name": "Streeterville",
-    "placeId": "ChIJ0UDWv6osDogRr7DEnYYPr4Y"
-  },
-  {
-    "name": "New Eastside",
-    "placeId": "ChIJjXp9wFcrDogRru8nq-MsgWY"
-  },
-  {
-    "name": "Printer's Row",
-    "placeId": "ChIJHyxSl5csDogRcG_kdoAw_ZE"
-    }
-]
-    
-    interface ResiderNeighborhood {
-      id: number;
-      primary: googlePlace;
-      alias?: string;
-    }
-    
-    const neighborhoods: ResiderNeighborhood[] = [
-      {
-        id: 1,
-        primary: googlePlaces.filter(place => place.name == "River North")[0],
-      },
-       {
-        id: 2,
-        primary: googlePlaces.filter(place => place.name == "River West")[0],
-      },
-       {
-        id: 3,
-        primary: googlePlaces.filter(place => place.name == "West Loop")[0],
-      },
-       {
-        id: 4,
-        primary: googlePlaces.filter(place => place.name == "South Loop")[0],
-      },
-       {
-        id: 5,
-        primary: googlePlaces.filter(place => place.name == "Streeterville")[0],
-      },
-       {
-        id: 6,
-        primary: googlePlaces.filter(place => place.name == "New Eastside")[0],
-        alias: "Lakeshore East"
-      },
-       {
-        id: 7,
-        primary: googlePlaces.filter(place => place.name == "Printer's Row")[0],
-      }
-    ]
-    
-    interface ResiderProperty {
-      id: number;
-      primary: googlePlace;
-      secondary?: googlePlace;
-    }
-    
-    const properties: ResiderProperty[] = [
-      {
-        id: 1,
-        primary: googlePlaces.filter(place => place.name == "River North")[0]
-      },
-      {
-        id: 2,
-        primary: googlePlaces.filter(place => place.name == "River North")[0]
-      },
-      {
-        id: 3,
-        primary: googlePlaces.filter(place => place.name == "New Eastside")[0]
-      },
-      {
-        id: 4,
-        primary: googlePlaces.filter(place => place.name == "Printer's Row")[0],
-        secondary: googlePlaces.filter(place => place.name === "South Loop")[0],
-      },
-      {
-        id: 5,
-        primary: googlePlaces.filter(place => place.name == "South Loop")[0]
-      }    
-    ]
-
- 
-    let searchText: string
-    let searchResults: ResiderProperty[] = []
-    
-    function search() {
-
-      function getPropertiesByGooglePlace(googlePlace: string) {
-        let primaryMatches = properties.filter(property =>
-            property.primary.name == googlePlace
-        )
-        // and properties with matching secondary neighborhoods
-        let secondaryMatches = properties.filter(property =>
-            property.secondary.name == googlePlace
-        )
-        // push them both to the result
-        primaryMatches.forEach(property => {
-            searchResults.push(property)
-        });
-        secondaryMatches.forEach(property => {
-            searchResults.push(property)
-        });
-      }
-
-    // is it a valid google places neighborhood?
-      if (googlePlaces.filter(place => place.name == searchText)) {
-        // great! then find properties with matching primary neighborhood
-            getPropertiesByGooglePlace(searchText)
-      } else {
-        // not a valid google places neighborhood?
-        // then search neighborhood alias
-        let aliasMatch = neighborhoods.filter(neighborhood =>
-            neighborhood.alias === searchText
-        )
-        // if matching alias get associated primary neighborhood (a valid google place)
-        // rerun getPropertiesByGooglePlaces() with that primary neighborhood
-        if (aliasMatch.length > 0) {
-          getPropertiesByGooglePlace(aliasMatch[0].primary.name)
-        }        
-      }
-    }    
-    </script>
-    
-    <input bind:value={searchText} placeholder="filter by neighborhood">
-    <button on:click={search}>Search</button>
-
-    <h2>Resulting properties</h2>
-        <p>{searchResults}</p>
-
-    <h3>Google Places</h3>  
-    <table>
-      <tr>
-        <th scope="row">placeName</th>
-        <th scope="row">placeId</th>
-      </tr>
-      
-      {#each googlePlaces as place}
-        <tr>
-          <td>{place.name}</td>
-          <td>{place.placeId}</td>
-        </tr>
-      {/each}
-    </table>
-    
-    
-    <h3>Neighborhoods</h3>  
-    <table>
-      <tr>
-        <th scope="row">id</th>
-        <th scope="row">primary</th>
-        <th scope="row">alias</th>
-      </tr>
-      {#each neighborhoods as neighborhood}
-        <tr>
-          <td>{neighborhood.id}</td>
-          <td>{neighborhood.primary.name}</td>
-          <td>{neighborhood.alias}</td>
-        </tr>
-      {/each}
-    </table>
-    
-    <h3>Properties</h3>  
-    <table>
-      <tr>
-        <th scope="row">id</th>
-        <th scope="row">primary</th>
-        <th scope="row">secondary</th>
-      </tr>
-      {#each properties as property}
-        <tr>
-          <td>{property.id}</td>
-          <td>{property.primary.name}</td>
-          <td>{property.secondary}</td>
-        </tr>
-      {/each}
-    </table>
-    
-    
-    <style>
-      * {
-        font-family: Open Sans;
-      }
-    
-      table {
-      border-collapse: collapse;
-      border: 2px solid rgb(200,200,200);
-      letter-spacing: 1px;
-      font-size: 0.8rem;
-    }
-    
-    td, th {
-      border: 1px solid rgb(190,190,190);
-      padding: 10px 20px;
-    }
-    
-    th {
-      background-color: rgb(235,235,235);
-    }
-    
-    td {
-      text-align: center;
-    }
-    
-    tr:nth-child(even) td {
-      background-color: rgb(250,250,250);
-    }
-    
-    tr:nth-child(odd) td {
-      background-color: rgb(245,245,245);
-    }
-    
-    
-    </style>
-    
+    // these are valid google places
+       enum googlePlace {
+           "River North" = "River North",
+           "River West" = "River West",
+           "West Loop" = "West Loop",
+           "South Loop" = "South Loop",
+           "Streeterville" = "Streeterville",
+           "New Eastside" = "New Eastside",
+           "Printer's Row" = "Printer's Row"
+       }
+   
+       
+       interface ResiderNeighborhood {
+         id: number;
+         primary: googlePlace;
+         alias?: string;
+       }
+       
+       const neighborhoods: ResiderNeighborhood[] = [
+         {
+           id: 1,
+           primary: googlePlace["River North"],
+         },
+          {
+           id: 2,
+           primary: googlePlace["River West"],
+         },
+          {
+           id: 3,
+           primary: googlePlace["West Loop"],
+         },
+          {
+           id: 4,
+           primary: googlePlace["South Loop"],
+         },
+          {
+           id: 5,
+           primary: googlePlace["Streeterville"],
+         },
+          {
+           id: 6,
+           primary: googlePlace["New Eastside"],
+         },
+          {
+           id: 7,
+           primary: googlePlace["Printer's Row"],
+         }
+       ]
+       
+       interface ResiderProperty {
+         id: number;
+         primary: googlePlace;
+         secondary?: googlePlace;
+       }
+       
+       const properties: ResiderProperty[] = [
+         {
+           id: 1,
+           primary: googlePlace["River North"]
+         },
+         {
+           id: 2,
+           primary: googlePlace["River North"]
+         },
+         {
+           id: 3,
+           primary: googlePlace["New Eastside"],
+         },
+         {
+           id: 4,
+           primary: googlePlace["Printer's Row"],
+           secondary: googlePlace["South Loop"]
+         },
+         {
+           id: 5,
+           primary: googlePlace["South Loop"],
+         }    
+       ]
+       
+       let searchText
+       
+       function search() {
+         console.log(searchText)
+       
+       }
+   
+   
+   
+       // converting enum to array for #each
+       const googlePlaces = [] 
+       for (const place in googlePlace) {
+           googlePlaces.push(place)
+       }
+       
+       </script>
+       
+       <input bind:value={searchText} placeholder="filter by neighborhood">
+       <button on:click={search}>Search</button>
+   
+   
+       
+       
+       <h3>Google Places</h3>  
+       <table>
+         <tr>
+           <th scope="row">placeName</th>
+         </tr>
+         
+         {#each googlePlaces as place}
+           <tr>
+             <td>{place}</td>
+           </tr>
+         {/each}
+       </table>
+       
+       
+       <h3>Neighborhoods</h3>  
+       <table>
+         <tr>
+           <th scope="row">id</th>
+           <th scope="row">primary</th>
+           <th scope="row">alias</th>
+         </tr>
+         {#each neighborhoods as neighborhood}
+           <tr>
+             <td>{neighborhood.id}</td>
+             <td>{neighborhood.primary}</td>
+             <td>{neighborhood.alias}</td>
+           </tr>
+         {/each}
+       </table>
+       
+       <h3>Properties</h3>  
+       <table>
+         <tr>
+           <th scope="row">id</th>
+           <th scope="row">primary</th>
+           <th scope="row">secondary</th>
+         </tr>
+         {#each properties as property}
+           <tr>
+             <td>{property.id}</td>
+             <td>{property.primary}</td>
+             <td>{property.secondary}</td>
+           </tr>
+         {/each}
+       </table>
+       
+       
+       <style>
+         * {
+           font-family: Open Sans;
+         }
+       
+         table {
+         border-collapse: collapse;
+         border: 2px solid rgb(200,200,200);
+         letter-spacing: 1px;
+         font-size: 0.8rem;
+       }
+       
+       td, th {
+         border: 1px solid rgb(190,190,190);
+         padding: 10px 20px;
+       }
+       
+       th {
+         background-color: rgb(235,235,235);
+       }
+       
+       td {
+         text-align: center;
+       }
+       
+       tr:nth-child(even) td {
+         background-color: rgb(250,250,250);
+       }
+       
+       tr:nth-child(odd) td {
+         background-color: rgb(245,245,245);
+       }
+       
+       
+       </style>
+       
