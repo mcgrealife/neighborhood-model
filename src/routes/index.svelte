@@ -96,7 +96,7 @@ interface googlePlace {
       {
         id: 4,
         primary: googlePlaces.filter(place => place.name == "Printer's Row")[0],
-        secondary: googlePlaces.filter(place => place.name == "South Loop")[0],
+        secondary: googlePlaces.filter(place => place.name === "South Loop")[0],
       },
       {
         id: 5,
@@ -105,28 +105,26 @@ interface googlePlace {
     ]
 
  
-
-
-    
     let searchText: string
+    let searchResults: ResiderProperty[] = []
     
     function search() {
-      console.log(searchText)
-
-      let result = []
-
 
       function getPropertiesByGooglePlace(googlePlace: string) {
         let primaryMatches = properties.filter(property =>
-            property.primary.toString() === googlePlace
+            property.primary.name == googlePlace
         )
         // and properties with matching secondary neighborhoods
         let secondaryMatches = properties.filter(property =>
-            property.secondary.toString() === googlePlace
+            property.secondary.name == googlePlace
         )
         // push them both to the result
-        result.push(primaryMatches)
-        result.push(secondaryMatches)
+        primaryMatches.forEach(property => {
+            searchResults.push(property)
+        });
+        secondaryMatches.forEach(property => {
+            searchResults.push(property)
+        });
       }
 
     // is it a valid google places neighborhood?
@@ -143,25 +141,17 @@ interface googlePlace {
         // rerun getPropertiesByGooglePlaces() with that primary neighborhood
         if (aliasMatch.length > 0) {
           getPropertiesByGooglePlace(aliasMatch[0].primary.name)
-        }
-        
+        }        
       }
-
-
-    
-    }
-
-
-
-    
+    }    
     </script>
     
     <input bind:value={searchText} placeholder="filter by neighborhood">
     <button on:click={search}>Search</button>
 
+    <h2>Resulting properties</h2>
+        <p>{searchResults}</p>
 
-    
-    
     <h3>Google Places</h3>  
     <table>
       <tr>
