@@ -113,23 +113,25 @@
   }
 
   function search(searchText) {
+    // check if it's a zipcode, if it is we don't need to search property neighborhoods
     let zipcodeInput = Number(searchText);
-
     if (zipcodeInput != NaN) {
+        // if zipcode, then search properties for zip codes matches
       let zipMatches = properties.filter((property) =>
         property.zipcode?.includes(zipcodeInput)
       );
+      // push matched properties to results array
       zipMatches.forEach((property) => {
         searchResults.push(property);
       });
     }
-    // is it a valid google places neighborhood?
+    // if it's not a zipcode, then is it a valid google places neighborhood?
     else if (googlePlaces.includes(searchText)) {
       // great! then find properties with matching primary neighborhood
       getPropertiesByGooglePlace(searchText);
     } else {
       // not a valid google places neighborhood?
-      // then search for neighborhood alias instead
+      // then search neighborhood unique alias's instead
       let aliasMatch = neighborhoods.filter(
         (neighborhood) => neighborhood.alias === searchText
       );
@@ -140,17 +142,18 @@
       }
     }
 
+    
     function getPropertiesByGooglePlace(searchString: string) {
+        // search properties 'primary neighborhood' values
       let primaryMatches = properties.filter(
         (property) => property.primary == searchString
       );
-
-      // and properties with matching secondary neighborhoods
+      // then properties 'secondary neighborhood' values
       let secondaryMatches = properties.filter(
         (property) => property.secondary == searchString
       );
 
-      // push them both to the result
+      // push them both to the results array
       primaryMatches.forEach((property) => {
         searchResults.push(property);
       });
@@ -161,10 +164,11 @@
   }
 </script>
 
+<!-- messy svelte code to show the interface. nothing special here! -->
 <main>
   <h3>
-    Search for properties by <code>google places neighborhood</code>, or
-    <code>neighborhood alias</code>
+    Search for properties by <i>google places neighborhood</i>, or
+    <i>neighborhood alias</i>
   </h3>
   <form action="">
     <input
