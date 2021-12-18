@@ -255,8 +255,10 @@
   <li>
     South Loop - returns 2 properties (1 based on it's secondary neighborhood!)
   </li>
-  <li>Printer's Row - returns property 4 again! in a different search</li>
-  <li>sdfasdff - returns nothing!</li>
+  <li>Printer's Row</li>
+  <li>Way West - an extreme alias example</li>
+  <li>60661 - 1 zipcode returns multiple properties</li>
+  <li>Streeterville - returned only from a secondary neighborhood</li>
 </main>
 
 <style>
