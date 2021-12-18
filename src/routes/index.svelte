@@ -115,16 +115,18 @@
   function search(searchText) {
     // check if it's a zipcode, if it is we don't need to search property neighborhoods
     let zipcodeInput = Number(searchText);
-    if (zipcodeInput != NaN) {
+    if (Number.isInteger(zipcodeInput)) {
         // if zipcode, then search properties for zip codes matches
       let zipMatches = properties.filter((property) =>
-        property.zipcode?.includes(zipcodeInput)
+        property.zipcode?.includes(zipcodeInput)  
       );
+
       // push matched properties to results array
       zipMatches.forEach((property) => {
         searchResults.push(property);
       });
     }
+    
     // if it's not a zipcode, then is it a valid google places neighborhood?
     else if (googlePlaces.includes(searchText)) {
       // great! then find properties with matching primary neighborhood
