@@ -29,6 +29,7 @@
     {
       id: 3,
       primary: googlePlace["West Loop"],
+      alias: "Way West"
     },
     {
       id: 4,
@@ -53,35 +54,41 @@
     id: number;
     primary: googlePlace;
     secondary?: googlePlace;
-    zipcode?: number
+    zipcode?: number[]
   }
 
   const properties: ResiderProperty[] = [
     {
       id: 1,
       primary: googlePlace["River North"],
+      zipcode: [60661, 60662]
     },
     {
       id: 2,
       primary: googlePlace["River North"],
-      secondary: googlePlace["Streeterville"]
+      secondary: googlePlace["Streeterville"],
+      zipcode: [60663]
     },
     {
       id: 3,
       primary: googlePlace["New Eastside"],
+      zipcode: [60664, 60665]
     },
     {
       id: 4,
       primary: googlePlace["Printer's Row"],
       secondary: googlePlace["South Loop"],
+      zipcode: [60666]
     },
     {
       id: 5,
       primary: googlePlace["South Loop"],
+      zipcode: [60667, 60668, 60669]
     },
     {
       id: 6,
       primary: googlePlace["West Loop"],
+      zipcode: [60610]
     },
     {
       id: 7,
@@ -152,23 +159,21 @@
 
 <main>
   
-    <!-- <p>Search for properties by google places neighborhood, or neighborhood alias (case sensitive)</p> -->
-    <br/>
+    
+
+    <h3>Search for properties by <code>google places neighborhood</code>, or <code>neighborhood alias</code></h3>
   <input bind:value={searchText} placeholder="Search for properties by google places neighborhood, or neighborhood alias" class="input"/>
   <button on:click={onClick} class="btn">Search</button>
 
   
 
   {#if searchResults.length > 0}
-  <h3>{searchResults.length} properties match "{lastSearchedText}"</h3>
-    <!-- {#each searchResults as property}
-      <p>Property {property.id}</p>
-    {/each} -->
+  <h3>🏢 {searchResults.length} properties match "{lastSearchedText}"</h3>
   {:else}
   {#if lastSearchedText.length == 0}
-        <h3>Search for properties by google places neighborhood, or neighborhood alias (<i>case sensitive</i>)</h3>
+        <h3>Beware: case sensitive! 💾</h3>
         {:else}
-    <h3>0 matches for "{lastSearchedText}". try again (case-sensitive)</h3>
+    <h3>0 properties matches "{lastSearchedText}". try again 🤨 (case-sensitive)</h3>
     {/if}
   {/if}
 
@@ -308,8 +313,8 @@
   } */
 
   tr.selected {
-    background-color: #3c4043 !important;
-    color: white !important;
+    background-color: #3c4043 ;
+    color: white ;
     font-weight: 700;
   }
 
