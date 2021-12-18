@@ -1,16 +1,40 @@
 <script lang="ts">
 
- // these are valid google places
-    enum googlePlace {
-        "River North" = "River North",
-        "River West" = "River West",
-        "West Loop" = "West Loop",
-        "South Loop" = "South Loop",
-        "Streeterville" = "Streeterville",
-        "New Eastside" = "New Eastside",
-        "Printer's Row" = "Printer's Row"
-    }
+interface googlePlace {
+    name: string;
+    placeId: string;
+}
 
+ const googlePlaces = [
+  {
+    "name": "River North",
+    "placeId":"ChIJS2Sm7bUsDogR96Ftwh-QLis"
+  },
+  {
+    "name": "River West",
+    "placeId": "ChIJ6XSSwtIsDogR5xHPvcHH9r0"
+  },
+  {
+    "name": "West Loop",
+    "placeId": "ChIJ3baIM9osDogRVpFwiwqSLJQ"
+  },
+  {
+    "name": "South Loop",
+    "placeId": "ChIJ-xi8O48sDogRcBMK7WhN4pE"
+    },
+  {
+    "name": "Streeterville",
+    "placeId": "ChIJ0UDWv6osDogRr7DEnYYPr4Y"
+  },
+  {
+    "name": "New Eastside",
+    "placeId": "ChIJjXp9wFcrDogRru8nq-MsgWY"
+  },
+  {
+    "name": "Printer's Row",
+    "placeId": "ChIJHyxSl5csDogRcG_kdoAw_ZE"
+    }
+]
     
     interface ResiderNeighborhood {
       id: number;
@@ -21,31 +45,32 @@
     const neighborhoods: ResiderNeighborhood[] = [
       {
         id: 1,
-        primary: googlePlace["River North"],
+        primary: googlePlaces.filter(place => place.name == "River North")[0],
       },
        {
         id: 2,
-        primary: googlePlace["River West"],
+        primary: googlePlaces.filter(place => place.name == "River West")[0],
       },
        {
         id: 3,
-        primary: googlePlace["West Loop"],
+        primary: googlePlaces.filter(place => place.name == "West Loop")[0],
       },
        {
         id: 4,
-        primary: googlePlace["South Loop"],
+        primary: googlePlaces.filter(place => place.name == "South Loop")[0],
       },
        {
         id: 5,
-        primary: googlePlace["Streeterville"],
+        primary: googlePlaces.filter(place => place.name == "Streeterville")[0],
       },
        {
         id: 6,
-        primary: googlePlace["New Eastside"],
+        primary: googlePlaces.filter(place => place.name == "New Eastside")[0],
+        alias: "Lakeshore East"
       },
        {
         id: 7,
-        primary: googlePlace["Printer's Row"],
+        primary: googlePlaces.filter(place => place.name == "Printer's Row")[0],
       }
     ]
     
@@ -58,41 +83,76 @@
     const properties: ResiderProperty[] = [
       {
         id: 1,
-        primary: googlePlace["River North"]
+        primary: googlePlaces.filter(place => place.name == "River North")[0]
       },
       {
         id: 2,
-        primary: googlePlace["River North"]
+        primary: googlePlaces.filter(place => place.name == "River North")[0]
       },
       {
         id: 3,
-        primary: googlePlace["New Eastside"],
+        primary: googlePlaces.filter(place => place.name == "New Eastside")[0]
       },
       {
         id: 4,
-        primary: googlePlace["Printer's Row"],
-        secondary: googlePlace["South Loop"]
+        primary: googlePlaces.filter(place => place.name == "Printer's Row")[0],
+        secondary: googlePlaces.filter(place => place.name == "South Loop")[0],
       },
       {
         id: 5,
-        primary: googlePlace["South Loop"],
+        primary: googlePlaces.filter(place => place.name == "South Loop")[0]
       }    
     ]
+
+ 
+
+
     
-    let searchText
+    let searchText: string
     
     function search() {
       console.log(searchText)
+
+      let result = []
+
+
+      function getPropertiesByGooglePlace(googlePlace: string) {
+        let primaryMatches = properties.filter(property =>
+            property.primary.toString() === googlePlace
+        )
+        // and properties with matching secondary neighborhoods
+        let secondaryMatches = properties.filter(property =>
+            property.secondary.toString() === googlePlace
+        )
+        // push them both to the result
+        result.push(primaryMatches)
+        result.push(secondaryMatches)
+      }
+
+    // is it a valid google places neighborhood?
+      if (googlePlaces.filter(place => place.name == searchText)) {
+        // great! then find properties with matching primary neighborhood
+            getPropertiesByGooglePlace(searchText)
+      } else {
+        // not a valid google places neighborhood?
+        // then search neighborhood alias
+        let aliasMatch = neighborhoods.filter(neighborhood =>
+            neighborhood.alias === searchText
+        )
+        // if matching alias get associated primary neighborhood (a valid google place)
+        // rerun getPropertiesByGooglePlaces() with that primary neighborhood
+        if (aliasMatch.length > 0) {
+          getPropertiesByGooglePlace(aliasMatch[0].primary.name)
+        }
+        
+      }
+
+
     
     }
 
 
 
-    // converting enum to array for #each
-    const googlePlaces = [] 
-    for (const place in googlePlace) {
-        googlePlaces.push(place)
-    }
     
     </script>
     
@@ -106,11 +166,13 @@
     <table>
       <tr>
         <th scope="row">placeName</th>
+        <th scope="row">placeId</th>
       </tr>
       
       {#each googlePlaces as place}
         <tr>
-          <td>{place}</td>
+          <td>{place.name}</td>
+          <td>{place.placeId}</td>
         </tr>
       {/each}
     </table>
@@ -126,7 +188,7 @@
       {#each neighborhoods as neighborhood}
         <tr>
           <td>{neighborhood.id}</td>
-          <td>{neighborhood.primary}</td>
+          <td>{neighborhood.primary.name}</td>
           <td>{neighborhood.alias}</td>
         </tr>
       {/each}
@@ -142,7 +204,7 @@
       {#each properties as property}
         <tr>
           <td>{property.id}</td>
-          <td>{property.primary}</td>
+          <td>{property.primary.name}</td>
           <td>{property.secondary}</td>
         </tr>
       {/each}
